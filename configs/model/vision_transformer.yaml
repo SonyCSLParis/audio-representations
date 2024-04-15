@@ -1,0 +1,56 @@
+_target_: src.models.m2d_module.M2DModule
+
+encoder:
+  _target_: src.models.components.vision_transformer.ViTEncoder
+  img_size:
+    - 80
+    - 208
+  in_chans: 1
+  patch_size: 16
+  embed_dim: 768
+  depth: 12
+  num_heads: 12
+  mlp_ratio: 4.
+  flash_attn: true
+
+predictor:
+  _target_: src.models.components.vision_transformer.ViTPredictor
+  img_size: ${model.encoder.img_size}
+  patch_size: ${model.encoder.patch_size}
+  encoder_embed_dim: ${model.encoder.embed_dim}
+  embed_dim: 512
+  depth: 8
+  num_heads: 16
+  mlp_ratio: 4.
+  flash_attn: ${model.encoder.flash_attn}
+
+criterion:
+  _target_: src.models.components.loss.Loss
+  loss_type: smooth_l1
+  norm_pix_loss: true
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: ${effective_lr:${model.base_lr},${data.batch_size}}
+  weight_decay: 0.05
+  betas:
+    - 0.9
+    - 0.95
+
+scheduler:
+  _target_: src.utils.scheduler.LinearWarmupCosineAnnealingLR
+  _partial_: true
+  warmup_epochs: 20
+
+ma_callback:
+  _target_: src.callbacks.ma_update.MAWeightUpdate
+  initial_tau: 0.99995
+  final_tau: 0.99999
+  update_method: lin
+
+# base learning rate
+base_lr: 0.0003
+
+# compile model for faster training with pytorch 2.0
+compile: false

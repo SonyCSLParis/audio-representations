@@ -1,0 +1,11 @@
+_target_: src.data.lms_datamodule.LMSDataModule
+data_path: ${paths.data_dir}
+dataset: ${data.data_path}/files_audioset.csv
+crop_frames: ${model.encoder.img_size[1]}
+norm_stats:
+  - -7.0633
+  - 4.1971
+batch_size: 2048  # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+num_workers: 32   # Total number of workers (per GPU!)
+pin_memory: true
+devices: ${trainer.devices}
