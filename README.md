@@ -51,6 +51,8 @@ Our model is evaluated on 8 various downstream tasks, including environmental, s
 
 Will be available soon...
 
+**Update:** I accidentally deleted my logs and no longer work on this topic. Anyway, if you are looking for a powerful audio encoder, use [MATPAC](https://github.com/aurianworld/matpac) instead.
+
 ## Credits
 
 - This great [Lightning+Hydra template](https://github.com/ashleve/lightning-hydra-template)
